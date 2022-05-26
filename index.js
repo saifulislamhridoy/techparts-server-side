@@ -18,11 +18,24 @@ async function run(){
 try{
  await client.connect()
  const productCollection = client.db('techparts').collection('product');
+ const userCollection = client.db('techparts').collection('users');
  
  app.post('/product',async(req,res)=>{
      const product = req.body 
      const result = await productCollection.insertOne(product)
      res.send(result)
+ })
+
+ app.put('/user/:email',async(req,res)=>{
+     const email = req.params.email
+     const user = req.body
+     const filter = {email:email}
+     const options={upsert:true}
+     const updateDoc ={
+         $set:user
+     }
+   const result = await userCollection.updateOne(filter,updateDoc,options)
+   res.send(result)
  })
 }
 finally{
