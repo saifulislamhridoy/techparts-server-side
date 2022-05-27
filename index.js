@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -93,6 +93,22 @@ try{
   app.post('/order',async(req,res)=>{
     const order = req.body
     const result = await orderCollection.insertOne(order)
+    res.send(result)
+  })
+
+  app.put('/order/:id',async(req,res)=>{
+    const id = req.params.id
+    const quantity = req.body.quantity
+    const filter={_id:ObjectId(id)}
+    const product = await productCollection.findOne(filter)
+    const remainingQuantity = parseInt(product.availableQuantity) - parseInt(quantity)
+    console.log(remainingQuantity);
+    const updateDoc ={
+      $set:{
+        availableQuantity:remainingQuantity
+      }
+    }
+    const result = await productCollection.updateOne(filter,updateDoc)
     res.send(result)
   })
 }
