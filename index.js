@@ -34,6 +34,7 @@ try{
  await client.connect()
  const productCollection = client.db('techparts').collection('product');
  const userCollection = client.db('techparts').collection('users');
+ const orderCollection = client.db('techparts').collection('orders');
  
  app.post('/product',async(req,res)=>{
      const product = req.body 
@@ -51,7 +52,7 @@ try{
     const email = req.params.email
     const requester=req.decoded.email
     const requesterAccount = await userCollection.findOne({email:requester})
-    if(requesterAccount.role==='admn'){
+    if(requesterAccount.role==='admin'){
         const filter = {email:email}
         const updateDoc ={
             $set:{
@@ -75,7 +76,7 @@ try{
          $set:user
      }
    const result = await userCollection.updateOne(filter,updateDoc,options)
-   const token = jwt.sign({email:email}, process.env.ACCESS_TOKEN_SECRET,{expiresIn:'1h'})
+   const token = jwt.sign({email:email}, process.env.ACCESS_TOKEN_SECRET,{expiresIn:'7d'})
    res.send({result,token})
  })
 
@@ -84,9 +85,15 @@ try{
     res.send(users);
   });
 
-  app.get('/product',async(req,res)=>{
+  app.get('/product',verifyJWT,async(req,res)=>{
     const products = await productCollection.find().toArray()
     res.send(products)
+  })
+
+  app.post('/order',async(req,res)=>{
+    const order = req.body
+    const result = await orderCollection.insertOne(order)
+    res.send(result)
   })
 }
 finally{
