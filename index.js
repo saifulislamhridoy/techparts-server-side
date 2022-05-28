@@ -35,6 +35,7 @@ try{
  const productCollection = client.db('techparts').collection('product');
  const userCollection = client.db('techparts').collection('users');
  const orderCollection = client.db('techparts').collection('orders');
+ const reviewCollection = client.db('techparts').collection('reviews');
  
  app.post('/product',async(req,res)=>{
      const product = req.body 
@@ -85,7 +86,7 @@ try{
     res.send(users);
   });
 
-  app.get('/product',verifyJWT,async(req,res)=>{
+  app.get('/product',async(req,res)=>{
     const products = await productCollection.find().toArray()
     res.send(products)
   })
@@ -110,6 +111,18 @@ try{
     }
     const result = await productCollection.updateOne(filter,updateDoc)
     res.send(result)
+  });
+
+  app.put('/review/:email',async(req,res)=>{
+    const email = req.params.email
+     const review = req.body
+     const filter = {email:email}
+     const options={upsert:true}
+     const updateDoc ={
+         $set:review
+     }
+     const result = await reviewCollection.updateOne(filter,updateDoc,options);
+     res.send(result)
   })
 }
 finally{
