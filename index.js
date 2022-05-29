@@ -133,15 +133,21 @@ try{
 
   app.put('/profile/:email',async(req,res)=>{
     const email = req.params.email
-     const profile = req.body
+     const myProfile = req.body
      const filter = {email:email}
      const options={upsert:true}
      const updateDoc ={
-         $set:profile
+         $set:myProfile
      }
      const result = await profileCollection.updateOne(filter,updateDoc,options);
      res.send(result)
   });
+
+  app.get('/profile/:email',async(req,res)=>{
+    const email = req.params.email
+    const profile = await profileCollection.findOne({email:email})
+    res.send(profile)
+  })
 }
 finally{
 
