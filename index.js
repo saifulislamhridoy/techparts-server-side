@@ -36,6 +36,7 @@ try{
  const userCollection = client.db('techparts').collection('users');
  const orderCollection = client.db('techparts').collection('orders');
  const reviewCollection = client.db('techparts').collection('reviews');
+ const profileCollection = client.db('techparts').collection('profiles');
  
  app.post('/product',async(req,res)=>{
      const product = req.body 
@@ -123,7 +124,24 @@ try{
      }
      const result = await reviewCollection.updateOne(filter,updateDoc,options);
      res.send(result)
-  })
+  });
+
+  app.get('/review',async(req,res)=>{
+    const reviews =await (await reviewCollection.find().toArray()).reverse()
+    res.send(reviews)
+  });
+
+  app.put('/profile/:email',async(req,res)=>{
+    const email = req.params.email
+     const profile = req.body
+     const filter = {email:email}
+     const options={upsert:true}
+     const updateDoc ={
+         $set:profile
+     }
+     const result = await profileCollection.updateOne(filter,updateDoc,options);
+     res.send(result)
+  });
 }
 finally{
 
