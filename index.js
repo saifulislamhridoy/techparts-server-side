@@ -154,6 +154,16 @@ try{
     const myOrders = await orderCollection.find({email:email}).toArray()
     res.send(myOrders)
   });
+
+  app.delete('/pd/:id',async(req,res)=>{
+    const id = req.params.id 
+    const result= await orderCollection.deleteOne({_id:ObjectId(id)})
+    res.send(result)
+  });
+  app.get('/manageAllOrder',async(req,res)=>{
+    const orders = await orderCollection.find({}).toArray()
+    res.send(orders)
+  })
 }
 finally{
 
