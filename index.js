@@ -163,7 +163,14 @@ try{
   app.get('/manageAllOrder',async(req,res)=>{
     const orders = await orderCollection.find({}).toArray()
     res.send(orders)
+  });
+
+  app.delete('/product/:id',async(req,res)=>{
+    const id = req.params.id 
+    const result = await productCollection.deleteOne({_id:ObjectId(id)})
+    res.send(result)
   })
+  
 }
 finally{
 
