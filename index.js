@@ -147,7 +147,13 @@ try{
     const email = req.params.email
     const profile = await profileCollection.findOne({email:email})
     res.send(profile)
-  })
+  });
+
+  app.get('/myOrder/:email',async(req,res)=>{
+    const email = req.params.email
+    const myOrders = await orderCollection.find({email:email}).toArray()
+    res.send(myOrders)
+  });
 }
 finally{
 
